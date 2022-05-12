@@ -22,11 +22,13 @@
   },
   "dependencies": {
     "@google-cloud/logging-winston": "^4.2.3",
+    "@google-cloud/storage": "^5.19.4",
     "@nestjs/common": "^8.0.0",
     "@nestjs/config": "^2.0.0",
     "@nestjs/core": "^8.0.0",
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^8.0.0",
+    "firebase-admin": "^10.2.0",
     "nest-winston": "^1.6.2",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
