@@ -10,6 +10,7 @@ import { AuthModule } from './auth/auth.module';
     ConfigModule.forRoot({
       isGlobal: true,
       load: [mainConfig],
+      envFilePath: [`env/${process.env.NODE_ENV ?? 'develop'}.env`],
     }),
     AuthModule,
   ],

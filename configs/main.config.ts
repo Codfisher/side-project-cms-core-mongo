@@ -7,6 +7,6 @@ export interface MainConfig {
 export default registerAs(
   'main',
   (): MainConfig => ({
-    port: 8080,
+    port: parseInt(process.env.PORT),
   }),
 );
