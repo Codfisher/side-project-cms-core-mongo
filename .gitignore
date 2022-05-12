@@ -1,5 +1,4 @@
-*.config.ts
-
+*.env
 # compiled output
 /dist
 /node_modules
