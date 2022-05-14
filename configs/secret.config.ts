@@ -2,8 +2,8 @@ import { registerAs } from '@nestjs/config';
 
 export interface Config {
   key: string;
-  /** 有效秒數 */
-  expiresIn: number;
+  /** 有效時間 */
+  expiresIn: string;
 }
 
 export const Name = 'secret';
@@ -12,6 +12,6 @@ export default registerAs(
   Name,
   (): Config => ({
     key: process.env.SERCRET_KEY,
-    expiresIn: parseInt(process.env.SERCRET_EXPIRES_IN),
+    expiresIn: process.env.SERCRET_EXPIRES_IN,
   }),
 );
