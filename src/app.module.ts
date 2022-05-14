@@ -1,8 +1,11 @@
 import { Module } from '@nestjs/common';
 
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import mainConfig from 'configs/main.config';
-import dbConfig from 'configs/db.config';
+import dbConfig, {
+  Name as DbName,
+  Config as DbConfig,
+} from 'configs/db.config';
 import secretConfig from 'configs/secret.config';
 
 import { AppController } from './app.controller';
@@ -15,6 +18,7 @@ import { LoggerModule } from './logger/logger.module';
 import { DbModule } from './db/db.module';
 import { UserModule } from './user/user.module';
 import { AccountModule } from './account/account.module';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [
@@ -26,6 +30,17 @@ import { AccountModule } from './account/account.module';
       isGlobal: true,
       load: [mainConfig, dbConfig, secretConfig],
       envFilePath: [`env/${process.env.NODE_ENV ?? 'develop'}.env`],
+    }),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => {
+        const { mongoDbUri: uri } = configService.get<DbConfig>(DbName);
+
+        return {
+          uri,
+        };
+      },
     }),
     AuthModule,
     LoggerModule,
