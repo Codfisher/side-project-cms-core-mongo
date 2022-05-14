@@ -1,11 +1,11 @@
 import { registerAs } from '@nestjs/config';
 import { ServiceAccount } from 'firebase-admin';
 
-export interface DbConfig {
+export interface Config {
   firebaseServiceAccount: ServiceAccount;
 }
 
-export default registerAs('db', (): DbConfig => {
+export default registerAs('db', (): Config => {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   const keyFile = require(`${process.cwd()}/${
     process.env.FIREBASE_PRIVATE_KEY_PATH
