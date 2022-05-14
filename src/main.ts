@@ -24,7 +24,8 @@ async function bootstrap() {
   app.use(helmet());
   app.use(cookieParser(secretConfig.key));
 
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+  app.setGlobalPrefix('api');
   app.enableVersioning({
     type: VersioningType.URI,
   });
