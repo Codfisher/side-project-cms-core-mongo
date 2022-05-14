@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
-import { Config as DbConfig } from 'configs/db.config';
+import { Config, Name } from 'configs/db.config';
 
 import { initializeApp, cert } from 'firebase-admin/app';
 import { Auth, getAuth } from 'firebase-admin/auth';
@@ -14,7 +14,7 @@ export class DbService {
   private auth: Auth;
 
   constructor(private configService: ConfigService) {
-    const { firebaseServiceAccount } = this.configService.get<DbConfig>('db');
+    const { firebaseServiceAccount } = this.configService.get<Config>(Name);
 
     const storageBucketUrl = `${firebaseServiceAccount.projectId}.appspot.com`;
 

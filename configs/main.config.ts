@@ -5,8 +5,10 @@ export interface Config {
   timezone: string;
 }
 
+export const Name = 'main';
+
 export default registerAs(
-  'main',
+  Name,
   (): Config => ({
     port: parseInt(process.env.PORT),
     timezone: 'Asia/Taipei',

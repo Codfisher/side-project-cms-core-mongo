@@ -6,8 +6,10 @@ export interface Config {
   expiresIn: number;
 }
 
+export const Name = 'secret';
+
 export default registerAs(
-  'secret',
+  Name,
   (): Config => ({
     key: process.env.SERCRET_KEY,
     expiresIn: parseInt(process.env.SERCRET_EXPIRES_IN),

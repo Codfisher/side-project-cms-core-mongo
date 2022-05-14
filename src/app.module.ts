@@ -4,6 +4,7 @@ import { join } from 'path';
 import { ConfigModule } from '@nestjs/config';
 import mainConfig from 'configs/main.config';
 import dbConfig from 'configs/db.config';
+import secretConfig from 'configs/secret.config';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -22,7 +23,7 @@ import { DbModule } from './db/db.module';
     }),
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [mainConfig, dbConfig],
+      load: [mainConfig, dbConfig, secretConfig],
       envFilePath: [`env/${process.env.NODE_ENV ?? 'develop'}.env`],
     }),
     AuthModule,
