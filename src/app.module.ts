@@ -29,6 +29,7 @@ import { DbModule } from './db/db.module';
     AuthModule,
     LoggerModule,
     DbModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
