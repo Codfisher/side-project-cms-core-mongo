@@ -2,7 +2,7 @@ import { registerAs } from '@nestjs/config';
 
 export interface Config {
   key: string;
-  /** 有效時間 */
+  /** ms 時間字串格式，ex: 1m、9h */
   expiresIn: string;
 }
 
