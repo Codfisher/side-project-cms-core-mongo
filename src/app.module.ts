@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { join } from 'path';
 
 import { ConfigModule } from '@nestjs/config';
 import mainConfig from 'configs/main.config';
@@ -14,6 +13,8 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { AuthModule } from './auth/auth.module';
 import { LoggerModule } from './logger/logger.module';
 import { DbModule } from './db/db.module';
+import { UserModule } from './user/user.module';
+import { AccountModule } from './account/account.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { DbModule } from './db/db.module';
     LoggerModule,
     DbModule,
     UserModule,
+    AccountModule,
   ],
   controllers: [AppController],
   providers: [AppService],
