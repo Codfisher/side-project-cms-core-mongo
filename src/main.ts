@@ -1,4 +1,4 @@
-import compression from 'compression';
+import * as compression from 'compression';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 
