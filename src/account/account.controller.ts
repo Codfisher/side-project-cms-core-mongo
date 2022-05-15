@@ -85,9 +85,7 @@ export class AccountController {
 
   @Get('account/:id')
   @Version('1')
-  async findOne(@Param() dto: FindOneAccountDto) {
-    const { id } = dto;
-
+  async findOne(@Param() { id }: FindOneAccountDto) {
     const [error, result] = await to(this.accountService.findById(id));
 
     if (error) {
@@ -130,7 +128,20 @@ export class AccountController {
 
   @Delete('account/:id')
   @Version('1')
-  remove(@Param('id') id: string) {
-    return this.accountService.remove(id);
+  async remove(@Param() { id }: FindOneAccountDto) {
+    const [error, result] = await to(this.accountService.remove(id));
+
+    if (error) {
+      this.loggerService.error(`刪除帳號 ID ${id} 錯誤 : ${error}`);
+
+      throw new HttpException(
+        '刪除資料發生錯誤，請稍後再試',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    return {
+      data: result,
+    };
   }
 }

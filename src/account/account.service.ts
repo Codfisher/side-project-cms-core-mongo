@@ -72,6 +72,16 @@ export class AccountService {
   }
 
   remove(id: string) {
-    return `This action removes a #${id} account`;
+    return this.accountModel
+      .findByIdAndUpdate(
+        id,
+        {
+          $set: {
+            'timestamp.deletedAt': this.utilsService.getUnix(),
+          },
+        },
+        { new: true },
+      )
+      .exec();
   }
 }
