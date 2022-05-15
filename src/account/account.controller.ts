@@ -33,9 +33,30 @@ export class AccountController {
   @Post('account')
   @Version('1')
   async create(@Body() dto: CreateAccountDto) {
-    const [error, result] = await to(this.accountService.create(dto));
-    if (error) {
-      this.loggerService.error(`建立帳號發生錯誤 : ${error}`);
+    const [findError, existAccount] = await to(
+      this.accountService.findByUsername(dto.username),
+    );
+    if (findError) {
+      this.loggerService.error(
+        `檢查 username 是否存在帳號發生錯誤 : ${findError}`,
+      );
+
+      throw new HttpException(
+        '建立帳號發生錯誤，請稍後再試',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    if (existAccount) {
+      throw new HttpException(
+        'username 已經存在，請嘗試其他 username',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const [createError, result] = await to(this.accountService.create(dto));
+    if (createError) {
+      this.loggerService.error(`建立帳號發生錯誤 : ${createError}`);
 
       throw new HttpException(
         '建立帳號發生錯誤，請稍後再試',

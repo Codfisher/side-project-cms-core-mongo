@@ -64,6 +64,10 @@ export class AccountService {
     return this.accountModel.findById(id).exec();
   }
 
+  findByUsername(username: string) {
+    return this.accountModel.find({ username }).exec();
+  }
+
   update(id: string, dto: UpdateAccountDto) {
     const data = flat(dto);
     return this.accountModel
