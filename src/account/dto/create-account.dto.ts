@@ -9,5 +9,5 @@ export class CreateAccountDto {
   @IsOptional()
   name: string;
   @IsOptional()
-  firebaseId: string;
+  firebaseIds: string[];
 }

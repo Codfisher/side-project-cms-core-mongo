@@ -2,11 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
+import * as dayjs from 'dayjs';
+import * as flat from 'flat';
+
 import { LoggerService } from 'src/logger/logger.service';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
+import { FindAllAccountDto } from './dto/find-all-account.dto';
 import { Account, AccountDocument } from './schema/account.schema';
-import * as dayjs from 'dayjs';
 
 @Injectable()
 export class AccountService {
@@ -18,33 +21,59 @@ export class AccountService {
   }
 
   create(dto: CreateAccountDto) {
-    const { username, name = '', firebaseId = '' } = dto;
+    const { username, name = '', firebaseIds = [] } = dto;
 
     const data: Account = {
       username,
       name,
-      firebaseId,
+      firebaseIds,
       timestamp: {
         createdAt: dayjs().unix(),
+        disabledAt: null,
+        deletedAt: null,
       },
     };
 
     return this.accountModel.create(data);
   }
 
-  findAll() {
-    return `This action returns all account`;
+  getTotalNumber() {
+    return this.accountModel
+      .countDocuments({
+        'timestamp.deletedAt': {
+          $ne: null,
+        },
+      })
+      .exec();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} account`;
+  findAll(dto: FindAllAccountDto) {
+    const { skip, limit } = dto;
+    return this.accountModel
+      .find({
+        'timestamp.deletedAt': {
+          $ne: null,
+        },
+      })
+      .skip(skip)
+      .limit(limit)
+      .exec();
   }
 
-  update(id: number, updateAccountDto: UpdateAccountDto) {
-    return `This action updates a #${id} account`;
+  findById(id: string) {
+    return this.accountModel.findById(id).exec();
   }
 
-  remove(id: number) {
+  update(id: string, dto: UpdateAccountDto) {
+    const data = flat(dto);
+    return this.accountModel.findByIdAndUpdate(
+      id,
+      { $set: data },
+      { new: true },
+    );
+  }
+
+  remove(id: string) {
     return `This action removes a #${id} account`;
   }
 }

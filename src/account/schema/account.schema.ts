@@ -3,6 +3,12 @@ import { Document } from 'mongoose';
 
 export type AccountDocument = Account & Document;
 
+interface Timestamp {
+  createdAt: number;
+  disabledAt: number | null;
+  deletedAt: number | null;
+}
+
 @Schema()
 export class Account {
   @Prop({
@@ -13,16 +19,16 @@ export class Account {
   @Prop()
   name: string;
   @Prop()
-  firebaseId: string;
+  firebaseIds: string[];
 
   @Prop(
     raw({
-      createdAt: { type: Number },
-      disabledAt: { type: Number },
-      deletedAt: { type: Number },
+      createdAt: { type: Number, required: true },
+      disabledAt: { type: Number, default: null },
+      deletedAt: { type: Number, default: null },
     }),
   )
-  timestamp: Record<string, number>;
+  timestamp: Timestamp;
 }
 
 export const AccountSchema = SchemaFactory.createForClass(Account);
