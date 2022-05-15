@@ -10,7 +10,7 @@ export const Name = 'main';
 export default registerAs(
   Name,
   (): Config => ({
-    port: parseInt(process.env.PORT),
+    port: parseInt(process.env.PORT ?? '8080'),
     timezone: 'Asia/Taipei',
   }),
 );

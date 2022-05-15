@@ -11,7 +11,7 @@ export const Name = 'secret';
 export default registerAs(
   Name,
   (): Config => ({
-    key: process.env.SERCRET_KEY,
-    expiresIn: process.env.SERCRET_EXPIRES_IN,
+    key: process.env.SERCRET_KEY ?? 'key',
+    expiresIn: process.env.SERCRET_EXPIRES_IN ?? '9h',
   }),
 );

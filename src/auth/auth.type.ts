@@ -1,5 +1,5 @@
 export interface GetAccountByFirebaseTokenError {
   key: 'verifyIdToken' | 'getUser';
   message: string;
-  info?: Error;
+  info?: any;
 }

@@ -10,7 +10,7 @@ export class FindAllAccountDto {
   })
   @Type(() => Number)
   @IsOptional()
-  skip: number;
+  skip = 0;
 
   @Min(0, {
     message: '$property 不可小於 0',
@@ -20,5 +20,5 @@ export class FindAllAccountDto {
   })
   @Type(() => Number)
   @IsOptional()
-  limit: number;
+  limit = 30;
 }

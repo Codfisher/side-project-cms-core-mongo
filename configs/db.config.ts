@@ -21,7 +21,7 @@ export default registerAs(Name, (): Config => {
   };
 
   const username = process.env.MONGO_USERNAME;
-  const password = encodeURIComponent(process.env.MONGO_PASSWORD);
+  const password = encodeURIComponent(process.env.MONGO_PASSWORD ?? '');
   const resource = process.env.MONGO_RESOURCE;
   const mongoDbUri = `mongodb+srv://${username}:${password}@${resource}`;
 

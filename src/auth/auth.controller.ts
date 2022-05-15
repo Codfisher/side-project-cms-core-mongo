@@ -32,9 +32,10 @@ export class AuthController {
   @Version('1')
   @Post('/auth/firebase')
   async login(@Body() { token }: FirebaseLoginDto) {
-    const [err, user] = await to<UserRecord, GetAccountByFirebaseTokenError>(
-      this.authService.getAccountByFirebaseToken(token),
-    );
+    const [err, user] = await to<
+      UserRecord | undefined,
+      GetAccountByFirebaseTokenError
+    >(this.authService.getAccountByFirebaseToken(token));
     if (err?.key === 'verifyIdToken') {
       this.loggerService.warn(`Firebase Token 解析錯誤 : ${err.info}`);
 

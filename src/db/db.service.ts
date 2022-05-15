@@ -14,7 +14,7 @@ export class DbService {
   private auth: Auth;
 
   constructor(private readonly configService: ConfigService) {
-    const { firebaseServiceAccount } = this.configService.get<Config>(Name);
+    const { firebaseServiceAccount } = this.configService.get(Name) as Config;
 
     const storageBucketUrl = `${firebaseServiceAccount.projectId}.appspot.com`;
 

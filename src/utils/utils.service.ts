@@ -15,7 +15,7 @@ export class UtilsService {
   }
 
   getUnix() {
-    const { timezone } = this.configService.get<Config>(Name);
+    const { timezone } = this.configService.get(Name) as Config;
     return dayjs().tz(timezone).unix();
   }
 }

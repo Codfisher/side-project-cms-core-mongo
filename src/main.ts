@@ -17,8 +17,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const configService = app.get(ConfigService);
-  const mainConfig = configService.get<MainConfig>(MainName);
-  const secretConfig = configService.get<SecretConfig>(SecretName);
+  const mainConfig = configService.get(MainName) as MainConfig;
+  const secretConfig = configService.get(SecretName) as SecretConfig;
 
   app.use(compression());
   app.use(helmet());

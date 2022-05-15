@@ -63,24 +63,26 @@ export class AccountService {
     }
 
     // 檢查 firebaseId 是否存在
-    const [findByFirebaseIdError, existFirebase] = await to(
-      this.findByFirebaseId(dto.firebaseId),
-    );
-    if (findByFirebaseIdError) {
-      const error: CreateError = {
-        key: 'findByFirebaseId',
-        message: '依 firebaseId 取得帳號錯誤',
-        info: findByFirebaseIdError,
-      };
-      return Promise.reject(error);
-    }
+    if (dto.firebaseId) {
+      const [findByFirebaseIdError, existFirebase] = await to(
+        this.findByFirebaseId(dto.firebaseId),
+      );
+      if (findByFirebaseIdError) {
+        const error: CreateError = {
+          key: 'findByFirebaseId',
+          message: '依 firebaseId 取得帳號錯誤',
+          info: findByFirebaseIdError,
+        };
+        return Promise.reject(error);
+      }
 
-    if (existFirebase) {
-      const error: CreateError = {
-        key: 'accountExisted',
-        message: '帳號已建立',
-      };
-      return Promise.reject(error);
+      if (existFirebase) {
+        const error: CreateError = {
+          key: 'accountExisted',
+          message: '帳號已建立',
+        };
+        return Promise.reject(error);
+      }
     }
 
     // 建立資料
@@ -129,11 +131,11 @@ export class AccountService {
       .exec();
   }
 
-  findById(id: string) {
+  findById(id: string): Promise<Account | null> {
     return this.accountModel.findById(id).exec();
   }
 
-  async findByUsername(username: string) {
+  async findByUsername(username: string): Promise<Account | null> {
     const [err, result] = await to(this.accountModel.find({ username }).exec());
     if (err) {
       return Promise.reject(err);
@@ -142,7 +144,7 @@ export class AccountService {
     return account;
   }
 
-  async findByFirebaseId(id: string) {
+  async findByFirebaseId(id: string): Promise<Account | null> {
     const [err, result] = await to(
       this.accountModel
         .find({
@@ -157,14 +159,14 @@ export class AccountService {
     return account;
   }
 
-  update(id: string, dto: UpdateAccountDto) {
-    const data = flat(dto);
+  update(id: string, dto: UpdateAccountDto): Promise<Account | null> {
+    const data = flat(dto) as any;
     return this.accountModel
       .findByIdAndUpdate(id, { $set: data }, { new: true })
       .exec();
   }
 
-  remove(id: string) {
+  remove(id: string): Promise<Account | null> {
     return this.accountModel
       .findByIdAndUpdate(
         id,

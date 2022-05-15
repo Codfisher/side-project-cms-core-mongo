@@ -36,7 +36,7 @@ import { UtilsModule } from './utils/utils.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
-        const { mongoDbUri: uri } = configService.get<DbConfig>(DbName);
+        const { mongoDbUri: uri } = configService.get(DbName) as DbConfig;
 
         return {
           uri,
