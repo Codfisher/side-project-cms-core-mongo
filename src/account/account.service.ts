@@ -2,10 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
-import * as dayjs from 'dayjs';
 import * as flat from 'flat';
 
 import { LoggerService } from 'src/logger/logger.service';
+import { UtilsService } from 'src/utils/utils.service';
+
 import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
 import { FindAllAccountDto } from './dto/find-all-account.dto';
@@ -15,6 +16,7 @@ import { Account, AccountDocument } from './schema/account.schema';
 export class AccountService {
   constructor(
     private readonly loggerService: LoggerService,
+    private readonly utilsService: UtilsService,
     @InjectModel(Account.name) private accountModel: Model<AccountDocument>,
   ) {
     //
@@ -28,7 +30,7 @@ export class AccountService {
       name,
       firebaseIds,
       timestamp: {
-        createdAt: dayjs().unix(),
+        createdAt: this.utilsService.getUnix(),
       },
     };
 
