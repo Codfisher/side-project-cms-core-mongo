@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { join } from 'path';
 
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import mainConfig from 'configs/main.config';
@@ -24,7 +25,7 @@ import { UtilsModule } from './utils/utils.module';
 @Module({
   imports: [
     ServeStaticModule.forRoot({
-      rootPath: 'client',
+      rootPath: join(__dirname, '../../', 'client'),
       exclude: ['/api*'],
     }),
     ConfigModule.forRoot({
