@@ -12,6 +12,7 @@ import {
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
+import { UtilsService } from './utils/utils.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -20,7 +21,9 @@ async function bootstrap() {
   const mainConfig = configService.get(MainName) as MainConfig;
   const secretConfig = configService.get(SecretName) as SecretConfig;
 
-  if (process.env.NODE_ENV === 'production') {
+  const utilsService = app.get(UtilsService);
+
+  if (!utilsService.isDev()) {
     app.use(helmet());
   }
 

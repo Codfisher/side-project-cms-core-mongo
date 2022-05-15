@@ -14,6 +14,10 @@ export class UtilsService {
     //
   }
 
+  isDev() {
+    return process.env.NODE_ENV !== 'production';
+  }
+
   getUnix() {
     const { timezone } = this.configService.get(Name) as Config;
     return dayjs().tz(timezone).unix();
