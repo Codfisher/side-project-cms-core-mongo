@@ -12,22 +12,26 @@ interface Timestamp {
 @Schema()
 export class Account {
   @Prop({
-    required: true,
-  })
-  username: string;
-  @Prop({
+    type: String,
     default: '',
   })
-  password: string;
+  username = '';
   @Prop({
+    type: String,
+    default: '',
+  })
+  password = '';
+  @Prop({
+    type: Array,
     default: [],
   })
-  firebaseIds: string[];
+  firebaseIds: string[] = [];
 
   @Prop({
+    type: String,
     required: true,
   })
-  name: string;
+  name = '';
 
   @Prop(
     raw({
@@ -36,7 +40,7 @@ export class Account {
       deletedAt: { type: Number },
     }),
   )
-  timestamp: Timestamp;
+  timestamp!: Timestamp;
 }
 
 export const AccountSchema = SchemaFactory.createForClass(Account);
