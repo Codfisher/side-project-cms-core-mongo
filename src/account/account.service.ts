@@ -29,8 +29,6 @@ export class AccountService {
       firebaseIds,
       timestamp: {
         createdAt: dayjs().unix(),
-        disabledAt: null,
-        deletedAt: null,
       },
     };
 
@@ -41,7 +39,7 @@ export class AccountService {
     return this.accountModel
       .countDocuments({
         'timestamp.deletedAt': {
-          $ne: null,
+          $exists: false,
         },
       })
       .exec();
@@ -52,7 +50,7 @@ export class AccountService {
     return this.accountModel
       .find({
         'timestamp.deletedAt': {
-          $ne: null,
+          $exists: false,
         },
       })
       .skip(skip)
@@ -66,11 +64,9 @@ export class AccountService {
 
   update(id: string, dto: UpdateAccountDto) {
     const data = flat(dto);
-    return this.accountModel.findByIdAndUpdate(
-      id,
-      { $set: data },
-      { new: true },
-    );
+    return this.accountModel
+      .findByIdAndUpdate(id, { $set: data }, { new: true })
+      .exec();
   }
 
   remove(id: string) {

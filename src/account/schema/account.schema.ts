@@ -5,8 +5,8 @@ export type AccountDocument = Account & Document;
 
 interface Timestamp {
   createdAt: number;
-  disabledAt: number | null;
-  deletedAt: number | null;
+  disabledAt?: number;
+  deletedAt?: number;
 }
 
 @Schema()
@@ -16,16 +16,20 @@ export class Account {
   })
   username: string;
 
-  @Prop()
+  @Prop({
+    required: true,
+  })
   name: string;
-  @Prop()
+  @Prop({
+    required: true,
+  })
   firebaseIds: string[];
 
   @Prop(
     raw({
       createdAt: { type: Number, required: true },
-      disabledAt: { type: Number, default: null },
-      deletedAt: { type: Number, default: null },
+      disabledAt: { type: Number },
+      deletedAt: { type: Number },
     }),
   )
   timestamp: Timestamp;
