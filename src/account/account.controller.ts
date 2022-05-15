@@ -18,6 +18,7 @@ import { AccountService } from './account.service';
 
 import { CreateAccountDto } from './dto/create-account.dto';
 import { FindAllAccountDto } from './dto/find-all-account.dto';
+import { FindOneAccountDto } from './dto/find-one-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
 
 @Controller()
@@ -84,7 +85,9 @@ export class AccountController {
 
   @Get('account/:id')
   @Version('1')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param() dto: FindOneAccountDto) {
+    const { id } = dto;
+
     const [error, result] = await to(this.accountService.findById(id));
 
     if (error) {
@@ -103,8 +106,26 @@ export class AccountController {
 
   @Patch('account/:id')
   @Version('1')
-  update(@Param('id') id: string, @Body() updateAccountDto: UpdateAccountDto) {
-    return this.accountService.update(id, updateAccountDto);
+  async update(
+    @Param() { id }: FindOneAccountDto,
+    @Body() updateAccountDto: UpdateAccountDto,
+  ) {
+    const [error, result] = await to(
+      this.accountService.update(id, updateAccountDto),
+    );
+
+    if (error) {
+      this.loggerService.error(`更新資料 ${id} 錯誤 : ${error}`);
+
+      throw new HttpException(
+        '更新資料發生錯誤，請稍後再試',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    return {
+      data: result,
+    };
   }
 
   @Delete('account/:id')
