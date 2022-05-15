@@ -1,5 +1,5 @@
 import { Prop, Schema, raw, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 export type AccountDocument = Account & Document;
 
@@ -29,7 +29,7 @@ export class Account {
 
   @Prop({
     type: String,
-    required: true,
+    default: '',
   })
   name = '';
 

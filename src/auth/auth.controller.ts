@@ -10,49 +10,96 @@ import {
   HttpException,
   HttpCode,
   HttpStatus,
+  Res,
 } from '@nestjs/common';
 import to from 'await-to-js';
+import { Response } from 'express';
+
+import { FirebaseLoginDto } from './auth.dto';
+import { CreateAccountDto } from 'src/account/dto/create-account.dto';
+import { UserRecord } from 'firebase-admin/auth';
 
 import { AuthService } from './auth.service';
 import { LoggerService } from 'src/logger/logger.service';
-
-import { FirebaseLoginDto } from './auth.dto';
-import { GetAccountByFirebaseTokenError } from './auth.type';
-import { UserRecord } from 'firebase-admin/auth';
+import { AccountService } from 'src/account/account.service';
+import { Account, AccountDocument } from 'src/account/schema/account.schema';
 
 @Controller()
 export class AuthController {
   constructor(
     private readonly loggerService: LoggerService,
     private readonly authService: AuthService,
+    private readonly accountService: AccountService,
   ) {
     //
   }
 
   @Version('1')
   @Post('/auth/firebase')
-  async login(@Body() { token }: FirebaseLoginDto) {
-    const [err, user] = await to<
-      UserRecord | undefined,
-      GetAccountByFirebaseTokenError
-    >(this.authService.getAccountByFirebaseToken(token));
-    if (err?.key === 'verifyIdToken') {
-      this.loggerService.warn(`Firebase Token 解析錯誤 : ${err.info}`);
-
+  async login(
+    @Body() { token }: FirebaseLoginDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const [error, decodedData] = await to(
+      this.authService.verifyFirebaseIdToken(token),
+    );
+    if (error) {
+      this.loggerService.warn('解析 Firebase ID Token 失敗');
+      this.loggerService.warn(error);
       throw new HttpException(
-        `登入錯誤，請確認 Token 有效或稍後再試`,
+        `Token 解析失敗，請確認 Token 有效性`,
         HttpStatus.BAD_REQUEST,
       );
     }
 
-    if (err) {
-      this.loggerService.error(`${err.message} : ${err.info}`);
+    // 檢查是否已建立帳號
+    const [existedError, existedAccount] = await to(
+      this.accountService.findByFirebaseId(decodedData.uid),
+    );
+    if (existedError) {
+      this.loggerService.error('檢查是否已建立帳號失敗');
+      this.loggerService.error(existedError);
       throw new HttpException(
-        `發生異常稍後再試`,
+        `登入錯誤，請稍後再試`,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
 
-    return user;
+    let targetAccount = existedAccount;
+
+    // 是否已存在帳號
+    if (!existedAccount) {
+      // 自動建立帳號
+      const params: CreateAccountDto = {
+        username: decodedData?.email ?? '',
+        name: decodedData?.name ?? '',
+        firebaseId: decodedData.uid,
+      };
+
+      const [createError, newAccount] = await to(
+        this.accountService.create(params),
+      );
+      if (createError) {
+        this.loggerService.error('自動建立帳號錯誤');
+        this.loggerService.error(createError);
+        throw new HttpException(
+          `登入錯誤，請稍後再試`,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      targetAccount = newAccount;
+    }
+
+    const account = targetAccount as AccountDocument;
+
+    const options = this.authService.getCookieOptions();
+    const tokenData = this.authService.getJwtToken(account);
+
+    res.cookie('token', tokenData.token, options);
+
+    return {
+      data: tokenData.token,
+    };
   }
 }

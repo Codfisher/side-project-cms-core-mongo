@@ -14,6 +14,7 @@ import { AppService } from './app.service';
 
 import { ServeStaticModule } from '@nestjs/serve-static';
 
+import { PassportModule } from '@nestjs/passport';
 import { AuthModule } from './auth/auth.module';
 import { LoggerModule } from './logger/logger.module';
 import { DbModule } from './db/db.module';
@@ -44,6 +45,7 @@ import { UtilsModule } from './utils/utils.module';
         };
       },
     }),
+    PassportModule,
     AuthModule,
     LoggerModule,
     DbModule,

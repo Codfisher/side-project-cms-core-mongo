@@ -131,11 +131,11 @@ export class AccountService {
       .exec();
   }
 
-  findById(id: string): Promise<Account | null> {
+  findById(id: string): Promise<AccountDocument | null> {
     return this.accountModel.findById(id).exec();
   }
 
-  async findByUsername(username: string): Promise<Account | null> {
+  async findByUsername(username: string): Promise<AccountDocument | null> {
     const [err, result] = await to(this.accountModel.find({ username }).exec());
     if (err) {
       return Promise.reject(err);
@@ -144,7 +144,7 @@ export class AccountService {
     return account;
   }
 
-  async findByFirebaseId(id: string): Promise<Account | null> {
+  async findByFirebaseId(id: string): Promise<AccountDocument | null> {
     const [err, result] = await to(
       this.accountModel
         .find({
@@ -159,14 +159,14 @@ export class AccountService {
     return account;
   }
 
-  update(id: string, dto: UpdateAccountDto): Promise<Account | null> {
+  update(id: string, dto: UpdateAccountDto): Promise<AccountDocument | null> {
     const data = flat(dto) as any;
     return this.accountModel
       .findByIdAndUpdate(id, { $set: data }, { new: true })
       .exec();
   }
 
-  remove(id: string): Promise<Account | null> {
+  remove(id: string): Promise<AccountDocument | null> {
     return this.accountModel
       .findByIdAndUpdate(
         id,
