@@ -20,8 +20,11 @@ async function bootstrap() {
   const mainConfig = configService.get(MainName) as MainConfig;
   const secretConfig = configService.get(SecretName) as SecretConfig;
 
+  if (process.env.NODE_ENV === 'production') {
+    app.use(helmet());
+  }
+
   app.use(compression());
-  app.use(helmet());
   app.use(cookieParser(secretConfig.key));
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
