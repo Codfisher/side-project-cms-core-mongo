@@ -15,15 +15,19 @@ export class Account {
     required: true,
   })
   username: string;
+  @Prop({
+    default: '',
+  })
+  password: string;
+  @Prop({
+    default: [],
+  })
+  firebaseIds: string[];
 
   @Prop({
     required: true,
   })
   name: string;
-  @Prop({
-    required: true,
-  })
-  firebaseIds: string[];
 
   @Prop(
     raw({

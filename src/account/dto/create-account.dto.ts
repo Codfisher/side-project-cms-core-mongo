@@ -6,8 +6,12 @@ export class CreateAccountDto {
   })
   username: string;
 
-  @IsOptional()
+  @IsNotEmpty({
+    message: '$property 不可為空',
+  })
   name: string;
   @IsOptional()
-  firebaseIds: string[];
+  firebaseId?: string;
+  @IsOptional()
+  password?: string;
 }

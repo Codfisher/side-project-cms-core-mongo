@@ -15,11 +15,13 @@ import to from 'await-to-js';
 
 import { LoggerService } from 'src/logger/logger.service';
 import { AccountService } from './account.service';
+import { CreateError } from './account.type';
 
 import { CreateAccountDto } from './dto/create-account.dto';
 import { FindAllAccountDto } from './dto/find-all-account.dto';
 import { FindOneAccountDto } from './dto/find-one-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
+import { AccountDocument } from './schema/account.schema';
 
 @Controller()
 export class AccountController {
@@ -33,30 +35,31 @@ export class AccountController {
   @Post('account')
   @Version('1')
   async create(@Body() dto: CreateAccountDto) {
-    const [findError, existAccount] = await to(
-      this.accountService.findByUsername(dto.username),
+    const [createError, result] = await to<AccountDocument, CreateError>(
+      this.accountService.create(dto),
     );
-    if (findError) {
-      this.loggerService.error(
-        `檢查 username 是否存在帳號發生錯誤 : ${findError}`,
-      );
 
+    if (createError?.key === 'chooseOneRequired') {
       throw new HttpException(
-        '建立帳號發生錯誤，請稍後再試',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-
-    if (existAccount) {
-      throw new HttpException(
-        'username 已經存在，請嘗試其他 username',
+        'FirebaseId 與 password 擇一必填',
         HttpStatus.BAD_REQUEST,
       );
     }
 
-    const [createError, result] = await to(this.accountService.create(dto));
+    if (createError?.key === 'usernameDuplicate') {
+      throw new HttpException(
+        'username 已存在，請嘗試其他組合',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (createError?.key === 'accountExisted') {
+      throw new HttpException('帳號已經存在', HttpStatus.BAD_REQUEST);
+    }
+
     if (createError) {
-      this.loggerService.error(`建立帳號發生錯誤 : ${createError}`);
+      this.loggerService.error(`建立帳號發生錯誤 :`);
+      this.loggerService.error(createError);
 
       throw new HttpException(
         '建立帳號發生錯誤，請稍後再試',

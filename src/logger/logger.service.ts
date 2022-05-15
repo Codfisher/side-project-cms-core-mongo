@@ -17,7 +17,7 @@ export class LoggerService {
     return process.env.NODE_ENV !== 'production';
   }
 
-  log(message: string) {
+  log(message: any) {
     if (this.isDev()) {
       this.logger.log(message);
       return;
@@ -26,7 +26,7 @@ export class LoggerService {
     this.winstonLogger.info(message);
   }
 
-  warn(message: string) {
+  warn(message: any) {
     if (this.isDev()) {
       this.logger.warn(message);
       return;
@@ -35,7 +35,7 @@ export class LoggerService {
     this.winstonLogger.warn(message);
   }
 
-  error(message: string) {
+  error(message: any) {
     if (this.isDev()) {
       this.logger.error(message);
       return;
