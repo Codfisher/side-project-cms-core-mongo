@@ -1,0 +1,3 @@
+輸入以下令命生成資源（name 為預期資源名稱）
+
+nest g resource resource/{name}
