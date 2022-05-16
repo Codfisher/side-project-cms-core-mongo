@@ -1,34 +1,58 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Version,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
+import to from 'await-to-js';
+
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { RequestUser } from 'src/auth/auth.type';
+import { ReqUser } from 'src/common/req-user.decorator';
+import { GetByIdError, User } from './user.type';
+import { LoggerService } from 'src/logger/logger.service';
 
-@Controller('user')
+@Controller()
 export class UserController {
-  constructor(private readonly userService: UserService) {}
-
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  constructor(
+    private readonly loggerService: LoggerService,
+    private readonly userService: UserService,
+  ) {
+    //
   }
 
-  @Get()
-  findAll() {
-    return this.userService.findAll();
-  }
+  @Version('1')
+  @UseGuards(AuthGuard('jwt'))
+  @Get('/user/self')
+  async getSelf(@ReqUser() { id }: RequestUser) {
+    const [error, user] = await to<User | undefined, GetByIdError>(
+      this.userService.getById({ id }),
+    );
+    if (error) {
+      this.loggerService.error('取得帳號資料失敗');
+      this.loggerService.error(error);
+      throw new HttpException(
+        `取得帳號資料失敗`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
-  }
+    if (!user) {
+      this.loggerService.warn('取得帳號資料失敗');
+      throw new HttpException(
+        `取得帳號資料失敗，請重新登入`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+    return user;
   }
 }

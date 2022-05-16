@@ -3,7 +3,7 @@ import { Document, Types } from 'mongoose';
 
 export type AccountDocument = Account & Document;
 
-interface Timestamp {
+export interface AccountTimestamp {
   createdAt: number;
   disabledAt?: number;
   deletedAt?: number;
@@ -40,7 +40,7 @@ export class Account {
       deletedAt: { type: Number },
     }),
   )
-  timestamp!: Timestamp;
+  timestamp!: AccountTimestamp;
 }
 
 export const AccountSchema = SchemaFactory.createForClass(Account);
