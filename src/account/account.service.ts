@@ -41,25 +41,27 @@ export class AccountService {
       return Promise.reject(error);
     }
 
-    // 檢查 username 是否重複
-    const [findByUsernameError, existUsername] = await to(
-      this.findByUsername(dto.username),
-    );
-    if (findByUsernameError) {
-      const error: CreateError = {
-        key: 'findByUsername',
-        message: '依 username 取得帳號錯誤',
-        info: findByUsernameError,
-      };
-      return Promise.reject(error);
-    }
+    if (username !== '') {
+      // 檢查 username 是否重複
+      const [findByUsernameError, existUsername] = await to(
+        this.findByUsername(dto.username),
+      );
+      if (findByUsernameError) {
+        const error: CreateError = {
+          key: 'findByUsername',
+          message: '依 username 取得帳號錯誤',
+          info: findByUsernameError,
+        };
+        return Promise.reject(error);
+      }
 
-    if (existUsername) {
-      const error: CreateError = {
-        key: 'usernameDuplicate',
-        message: 'username 已存在，請嘗試其他名稱',
-      };
-      return Promise.reject(error);
+      if (existUsername) {
+        const error: CreateError = {
+          key: 'usernameDuplicate',
+          message: 'username 已存在，請嘗試其他名稱',
+        };
+        return Promise.reject(error);
+      }
     }
 
     // 檢查 firebaseId 是否存在

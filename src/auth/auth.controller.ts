@@ -107,7 +107,7 @@ export class AuthController {
     if (!existedAccount) {
       // 自動建立帳號
       const params: CreateAccountDto = {
-        username: decodedData?.email ?? '',
+        username: '',
         name: decodedData?.name ?? '',
         firebaseId: decodedData.uid,
       };
