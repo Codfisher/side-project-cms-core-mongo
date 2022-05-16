@@ -11,6 +11,7 @@ import {
   HttpCode,
   HttpStatus,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import to from 'await-to-js';
 import { Response } from 'express';
@@ -19,10 +20,13 @@ import { FirebaseLoginDto } from './auth.dto';
 import { CreateAccountDto } from 'src/account/dto/create-account.dto';
 import { UserRecord } from 'firebase-admin/auth';
 
+import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { LoggerService } from 'src/logger/logger.service';
 import { AccountService } from 'src/account/account.service';
-import { Account, AccountDocument } from 'src/account/schema/account.schema';
+import { AccountDocument } from 'src/account/schema/account.schema';
+import { ReqUser } from 'src/common/req-user.decorator';
+import { RequestUser } from './auth.type';
 
 @Controller()
 export class AuthController {
@@ -35,8 +39,40 @@ export class AuthController {
   }
 
   @Version('1')
+  @UseGuards(AuthGuard('local'))
+  @Post('/auth/local')
+  async localLogin(
+    @ReqUser() user: RequestUser,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    // 取得帳號
+    const [error, account] = await to(this.accountService.findById(user.id));
+    if (error) {
+      this.loggerService.error('取得帳號失敗');
+      this.loggerService.error(error);
+      throw new HttpException(
+        `登入錯誤，請稍後再試`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    if (!account) {
+      throw new HttpException(`帳號不存在`, HttpStatus.BAD_REQUEST);
+    }
+
+    const options = this.authService.getCookieOptions();
+    const tokenData = this.authService.getJwtToken(account);
+
+    res.cookie('token', tokenData.token, options);
+
+    return {
+      data: tokenData.token,
+    };
+  }
+
+  @Version('1')
   @Post('/auth/firebase')
-  async login(
+  async firebaseLogin(
     @Body() { token }: FirebaseLoginDto,
     @Res({ passthrough: true }) res: Response,
   ) {
@@ -101,5 +137,11 @@ export class AuthController {
     return {
       data: tokenData.token,
     };
+  }
+
+  @Version('1')
+  @Delete('/auth')
+  async logout(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie('token');
   }
 }

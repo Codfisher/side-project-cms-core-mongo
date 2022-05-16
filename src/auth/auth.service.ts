@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import to from 'await-to-js';
 import * as ms from 'ms';
+import * as bcrypt from 'bcrypt';
 import { Auth, DecodedIdToken } from 'firebase-admin/auth';
 import { FirebaseError } from 'firebase-admin';
 
@@ -17,6 +18,8 @@ import {
 } from 'configs/secret.config';
 import { CookieOptions } from 'express';
 import { AccountDocument } from 'src/account/schema/account.schema';
+import { AccountService } from 'src/account/account.service';
+import { RequestUser } from './auth.type';
 
 @Injectable()
 export class AuthService {
@@ -24,12 +27,31 @@ export class AuthService {
 
   constructor(
     private readonly loggerService: LoggerService,
+    private readonly accountService: AccountService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly dbService: DbService,
     private readonly utilsService: UtilsService,
   ) {
     this.auth = this.dbService.getAuth();
+  }
+
+  async validateLocalAccount(username: string, password: string) {
+    const account = await this.accountService.findByUsername(username);
+
+    if (!account) {
+      return undefined;
+    }
+
+    const isMatch = await bcrypt.compare(password, account.password);
+    if (isMatch) {
+      const reqUser: RequestUser = {
+        id: account._id,
+      };
+      return reqUser;
+    }
+
+    return undefined;
   }
 
   async verifyFirebaseIdToken(token: string) {
