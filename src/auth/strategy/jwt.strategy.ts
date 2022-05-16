@@ -9,6 +9,8 @@ import {
   Config as SecretConfig,
   Name as SecretName,
 } from 'configs/secret.config';
+import { JwtPayload as AuthJwtPayload, RequestUser } from '../auth.type';
+import { JwtPayload } from 'jsonwebtoken';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -32,7 +34,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: any) {
-    return payload;
+  async validate(payload: JwtPayload & AuthJwtPayload): Promise<RequestUser> {
+    const user: RequestUser = {
+      id: payload.id,
+    };
+
+    return user;
   }
 }
