@@ -19,7 +19,7 @@ import {
 import { CookieOptions } from 'express';
 import { AccountDocument } from 'src/account/schema/account.schema';
 import { AccountService } from 'src/account/account.service';
-import { RequestUser } from './auth.type';
+import { JwtPayload, RequestUser } from './auth.type';
 
 @Injectable()
 export class AuthService {
@@ -45,10 +45,7 @@ export class AuthService {
 
     const isMatch = await bcrypt.compare(password, account.password);
     if (isMatch) {
-      const reqUser: RequestUser = {
-        id: account._id,
-      };
-      return reqUser;
+      return account;
     }
 
     return undefined;
@@ -67,7 +64,7 @@ export class AuthService {
   }
 
   getJwtToken(account: AccountDocument) {
-    const payload = {
+    const payload: JwtPayload = {
       id: account._id,
     };
 
