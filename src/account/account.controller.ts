@@ -17,16 +17,16 @@ import to from 'await-to-js';
 import { LoggerService } from 'src/logger/logger.service';
 import { AccountService } from './account.service';
 import { CreateError } from './account.type';
-import { AuthGuard } from '@nestjs/passport';
 
 import { CreateAccountDto } from './dto/create-account.dto';
 import { FindAllAccountDto } from './dto/find-all-account.dto';
 import { FindOneAccountDto } from './dto/find-one-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
 import { AccountDocument } from './schema/account.schema';
+import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 
 @Controller()
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(JwtAuthGuard)
 export class AccountController {
   constructor(
     private readonly loggerService: LoggerService,

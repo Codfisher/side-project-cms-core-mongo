@@ -18,15 +18,14 @@ import { Response } from 'express';
 
 import { FirebaseLoginDto } from './auth.dto';
 import { CreateAccountDto } from 'src/account/dto/create-account.dto';
-import { UserRecord } from 'firebase-admin/auth';
 
-import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { LoggerService } from 'src/logger/logger.service';
 import { AccountService } from 'src/account/account.service';
 import { AccountDocument } from 'src/account/schema/account.schema';
 import { ReqUser } from 'src/common/req-user.decorator';
 import { RequestUser } from './auth.type';
+import { LocalAuthGuard } from './guard/local-auth.guard';
 
 @Controller()
 export class AuthController {
@@ -39,7 +38,7 @@ export class AuthController {
   }
 
   @Version('1')
-  @UseGuards(AuthGuard('local'))
+  @UseGuards(LocalAuthGuard)
   @Post('/auth/local')
   async localLogin(
     @ReqUser() user: RequestUser,

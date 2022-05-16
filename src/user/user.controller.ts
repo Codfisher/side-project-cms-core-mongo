@@ -14,11 +14,11 @@ import {
 import to from 'await-to-js';
 
 import { UserService } from './user.service';
-import { AuthGuard } from '@nestjs/passport';
 import { RequestUser } from 'src/auth/auth.type';
 import { ReqUser } from 'src/common/req-user.decorator';
 import { GetByIdError, User } from './user.type';
 import { LoggerService } from 'src/logger/logger.service';
+import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 
 @Controller()
 export class UserController {
@@ -30,7 +30,7 @@ export class UserController {
   }
 
   @Version('1')
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(JwtAuthGuard)
   @Get('/user/self')
   async getSelf(@ReqUser() { id }: RequestUser) {
     const [error, user] = await to<User | undefined, GetByIdError>(
