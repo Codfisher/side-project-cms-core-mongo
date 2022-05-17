@@ -23,7 +23,7 @@ import { FindAllAccountDto } from './dto/find-all-account.dto';
 import { FindOneAccountDto } from './dto/find-one-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
 import { AccountDocument } from './schema/account.schema';
-import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller()
 @UseGuards(JwtAuthGuard)

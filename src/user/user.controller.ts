@@ -13,7 +13,7 @@ import { RequestUser } from 'src/auth/auth.type';
 import { ReqUser } from 'src/common/req-user.decorator';
 import { GetByIdError, User } from './user.type';
 import { LoggerService } from 'src/logger/logger.service';
-import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller()
 export class UserController {

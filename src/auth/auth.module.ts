@@ -10,8 +10,8 @@ import {
   Name as SecretName,
   Config as SecretConfig,
 } from 'configs/secret.config';
-import { LocalStrategy } from './strategy/local.strategy';
-import { JwtStrategy } from './strategy/jwt.strategy';
+import { LocalStrategy } from './strategies/local.strategy';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   imports: [

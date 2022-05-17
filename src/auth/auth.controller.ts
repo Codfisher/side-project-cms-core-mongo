@@ -21,7 +21,7 @@ import { AccountService } from 'src/account/account.service';
 import { AccountDocument } from 'src/account/schema/account.schema';
 import { ReqUser } from 'src/common/req-user.decorator';
 import { RequestUser } from './auth.type';
-import { LocalAuthGuard } from './guard/local-auth.guard';
+import { LocalAuthGuard } from './guards/local-auth.guard';
 
 @Controller()
 export class AuthController {
