@@ -22,6 +22,7 @@ import { UserModule } from './user/user.module';
 import { AccountModule } from './account/account.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UtilsModule } from './utils/utils.module';
+import { RoleModule } from './role/role.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { UtilsModule } from './utils/utils.module';
     UserModule,
     AccountModule,
     UtilsModule,
+    RoleModule,
   ],
   controllers: [AppController],
   providers: [AppService],
