@@ -14,7 +14,7 @@ export class SubjectItem {
   @IsNotEmpty({
     message: '$property 不可為空',
   })
-  name = '';
+  name!: Subject;
 
   @IsEnum(UserAction, {
     message: '$property 任一元素必須為 UserAction 枚舉項目',

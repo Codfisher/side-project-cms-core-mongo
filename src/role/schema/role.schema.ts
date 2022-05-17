@@ -1,17 +1,12 @@
 import { Prop, Schema, raw, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { Subject, UserAction } from '../role.type';
+import { SubjectItem } from '../dto/create-role.dto';
 
 export type RoleDocument = Role & Document;
 
 export interface RoleTimestamp {
   createdAt: number;
   deletedAt?: number;
-}
-
-export interface AllowSubject {
-  name: Subject;
-  actions: UserAction[];
 }
 
 @Schema()
@@ -31,7 +26,7 @@ export class Role {
     type: Array,
     default: [],
   })
-  subjects!: AllowSubject[];
+  subjects!: SubjectItem[];
 
   @Prop(
     raw({
