@@ -23,6 +23,7 @@ import { AccountModule } from './account/account.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UtilsModule } from './utils/utils.module';
 import { RoleModule } from './role/role.module';
+import { CaslModule } from 'nest-casl';
 
 @Module({
   imports: [
@@ -45,6 +46,9 @@ import { RoleModule } from './role/role.module';
           uri,
         };
       },
+    }),
+    CaslModule.forRoot({
+      getUserFromRequest: (request) => request.user,
     }),
     PassportModule,
     AuthModule,
